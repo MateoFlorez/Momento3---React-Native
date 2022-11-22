@@ -3,21 +3,32 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  View,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
+import { Text, View, TouchableOpacity, TextInput } from "react-native";
 import axios from "axios";
 
 function ScreenVentas() {
-  const [idsearch, setIdsearch] = useState('')
-  const [zona, setZona] = useState('')
-  const [fecha, setFecha] = useState('')
-  const [venta, setVenta] = useState('')
+  const [idsearch, setIdsearch] = useState("");
+  const [zona, setZona] = useState("");
+  const [fecha, setFecha] = useState("");
+  const [venta, setVenta] = useState("");
+  const [totalComision, setTotalComision] = useState("");
+
+  const guardarVenta = () => {
+    let miComision = 0;
+    if (zona == "Norte") {
+      miComision = (venta * 2) / 100;
+    } else if (zona == "Sur") {
+      miComision = (venta * 3) / 100;
+    }
+    setTotalComision(miComision);
+  };
+
+  const limpiarCampos = () => {
+    setZona("");
+    setFecha("");
+    setVenta("");
+    setTotalComision("");
+  };
 
   return (
     <View
@@ -25,11 +36,11 @@ function ScreenVentas() {
         flex: 1,
         padding: 24,
         alignItems: "center",
-        backgroundColor: "#BCBCBC",
+        backgroundColor: "#EDEBEA",
       }}
     >
       <View style={{ alignItems: "center", marginBottom: 20 }}>
-        <Text style={{ fontWeight: "bold" }}>Buscar Vendedor</Text>
+        <Text style={{ fontWeight: "bold" }}>Venta</Text>
         <TextInput
           style={[styles.inputs, { marginBottom: 30 }]}
           placeholder="Search by Id"
@@ -65,9 +76,9 @@ function ScreenVentas() {
           styles.buttons,
           { backgroundColor: "#71BA31", marginBottom: 5, width: 200 },
         ]}
-        onPress={() => saveCliente()}
+        onPress={() => guardarVenta()}
       >
-        <Text style={{ fontSize: 22, color: "white" }}>Guardar</Text>
+        <Text style={{ fontSize: 22, color: "white" }}>Calcular / Guardar</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -81,20 +92,11 @@ function ScreenVentas() {
       <TouchableOpacity
         style={[
           styles.buttons,
-          { backgroundColor: "#558CCF", marginBottom: 5, width: 200 },
+          { backgroundColor: "#71BA31", marginBottom: 5, width: 200 },
         ]}
-        onPress={() => updateCliente(idsearch)}
+        onPress={() => limpiarCampos()}
       >
-        <Text style={{ fontSize: 22, color: "white" }}>Editar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.buttons,
-          { backgroundColor: "#D14842", marginBottom: 50, width: 200 },
-        ]}
-        onPress={() => deleteCliente(idsearch)}
-      >
-        <Text style={{ fontSize: 22, color: "white" }}>Eliminar</Text>
+        <Text style={{ fontSize: 22, color: "white" }}>Limpiar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -157,7 +159,7 @@ function Home({ navigation }) {
           totalComision,
         }
       );
-      alert("Cliente actualizado correctamente ...");
+      alert("Actualizado correctamente ...");
     } catch (error) {
       console.log(error);
     } finally {
@@ -167,18 +169,25 @@ function Home({ navigation }) {
 
   const deleteCliente = async (id) => {
     try {
-      if (confirm("Está seguro de eliminar este cliente")) {
+      if (confirm("Está seguro de eliminar este registro")) {
         const response = await axios.delete(
           `http://localhost:19006/api/clientes/${id}`,
           {}
         );
-        alert("Cliente Eliminado exitosamente ...");
+        alert("Eliminado exitosamente ...");
       }
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const limpiar = () => {
+    setIdsearch("");
+    setNombre("");
+    setCorreo("");
+    setTotalComision("");
   };
 
   useEffect(() => {
@@ -190,7 +199,7 @@ function Home({ navigation }) {
         flex: 1,
         padding: 24,
         alignItems: "center",
-        backgroundColor: "#BCBCBC",
+        backgroundColor: "#EDEBEA",
       }}
     >
       <View style={{ alignItems: "center", marginBottom: 20 }}>
@@ -251,6 +260,15 @@ function Home({ navigation }) {
         onPress={() => updateCliente(idsearch)}
       >
         <Text style={{ fontSize: 22, color: "white" }}>Editar</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.buttons,
+          { backgroundColor: "#8762C8", marginBottom: 5, width: 200 },
+        ]}
+        onPress={() => limpiar()}
+      >
+        <Text style={{ fontSize: 22, color: "white" }}>Limpiar</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[
@@ -316,11 +334,8 @@ const styles = StyleSheet.create({
 
   inputs: {
     borderBottomColor: "black",
-    borderColor: "white",
+    borderColor: "transparent",
     textAlign: "center",
-    borderTopColor: "#BCBCBC",
-    borderLeftColor: "#BCBCBC",
-    borderRightColor: "#BCBCBC",
     borderWidth: 1,
     height: 30,
     width: 300,
