@@ -24,6 +24,7 @@ function ScreenVentas() {
   };
 
   const limpiarCampos = () => {
+    setIdsearch("");
     setZona("");
     setFecha("");
     setVenta("");
@@ -120,7 +121,7 @@ function Home({ navigation }) {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -129,8 +130,7 @@ function Home({ navigation }) {
       alert("Campos invalidos");
       return;
     }
-    setLoading(true);
-    try {
+        try {
       const response = await axios.post(`http://localhost:19006/api/clientes`, {
         nombre,
         correo,
@@ -140,7 +140,7 @@ function Home({ navigation }) {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -149,8 +149,7 @@ function Home({ navigation }) {
       alert("Campos invalidos");
       return;
     }
-    setLoading(true);
-    try {
+        try {
       const response = await axios.put(
         `http://localhost:19006/clientes/${id}`,
         {
@@ -163,7 +162,7 @@ function Home({ navigation }) {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -179,7 +178,7 @@ function Home({ navigation }) {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false);
+      
     }
   };
 
